@@ -15,6 +15,7 @@
 #   - AVUTIL
 #   - POSTPROC
 #   - SWSCALE
+#	- SWRESAMPLE
 # the following variables will be defined
 #  <component>_FOUND        - System has <component>
 #  <component>_INCLUDE_DIRS - Include directory necessary for using the <component> headers
@@ -33,7 +34,7 @@ include(FindPackageHandleStandardArgs)
 
 # The default components were taken from a survey over other FindFFMPEG.cmake files
 if (NOT FFmpeg_FIND_COMPONENTS)
-  set(FFmpeg_FIND_COMPONENTS AVCODEC AVFORMAT AVUTIL)
+  set(FFmpeg_FIND_COMPONENTS AVCODEC AVDEVICE AVFORMAT AVFILTER AVUTIL SWSCALE SWRESAMPLE)
 endif ()
 
 #
@@ -100,8 +101,8 @@ if (NOT FFMPEG_LIBRARIES)
 
   # Check for all possible component.
   find_component(AVCODEC    libavcodec    avcodec  libavcodec/avcodec.h)
-  find_component(AVFORMAT   libavformat   avformat libavformat/avformat.h)
   find_component(AVDEVICE   libavdevice   avdevice libavdevice/avdevice.h)
+  find_component(AVFORMAT   libavformat   avformat libavformat/avformat.h)
   find_component(AVUTIL     libavutil     avutil   libavutil/avutil.h)
   find_component(AVFILTER   libavfilter   avfilter libavfilter/avfilter.h)
   find_component(SWSCALE    libswscale    swscale  libswscale/swscale.h)
@@ -116,7 +117,7 @@ if (NOT FFMPEG_LIBRARIES)
       set(FFMPEG_DEFINITIONS ${FFMPEG_DEFINITIONS} ${${_component}_DEFINITIONS})
       list(APPEND FFMPEG_INCLUDE_DIRS ${${_component}_INCLUDE_DIRS})
     else ()
-      # message(STATUS "Required component ${_component} missing.")
+      message(STATUS "Required component ${_component} missing.")
     endif ()
   endforeach ()
 
@@ -137,7 +138,7 @@ if (NOT FFMPEG_LIBRARIES)
 endif ()
 
 # Now set the noncached _FOUND vars for the components.
-foreach (_component AVCODEC AVDEVICE AVFORMAT AVUTIL POSTPROCESS SWSCALE)
+foreach (_component AVCODEC AVDEVICE AVFORMAT AVFILTER AVUTIL SWSCALE SWRESAMPLE POSTPROC)
   set_component_found(${_component})
 endforeach ()
 
