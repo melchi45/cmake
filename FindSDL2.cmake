@@ -91,6 +91,8 @@ FIND_LIBRARY(SDL2_LIBRARY_TEMP
 	PATHS ${SDL2_SEARCH_PATHS}
 )
 
+message(STATUS "SDL2_BUILDING_LIBRARY = ${SDL2_BUILDING_LIBRARY}")
+
 IF(NOT SDL2_BUILDING_LIBRARY)
 	IF(NOT ${SDL2_INCLUDE_DIR} MATCHES ".framework")
 		# Non-OS X framework versions expect you to also dynamically link to
@@ -101,7 +103,7 @@ IF(NOT SDL2_BUILDING_LIBRARY)
 			NAMES SDL2main
 			HINTS
 			$ENV{SDL2DIR}
-			PATH_SUFFIXES lib64 lib
+			PATH_SUFFIXES lib64 lib lib/manual-link
 			PATHS ${SDL2_SEARCH_PATHS}
 		)
 	ENDIF(NOT ${SDL2_INCLUDE_DIR} MATCHES ".framework")

@@ -34,7 +34,8 @@ include(FindPackageHandleStandardArgs)
 
 # The default components were taken from a survey over other FindFFMPEG.cmake files
 if (NOT FFmpeg_FIND_COMPONENTS)
-  set(FFmpeg_FIND_COMPONENTS AVCODEC AVDEVICE AVFORMAT AVFILTER AVUTIL SWSCALE SWRESAMPLE)
+  # set(FFmpeg_FIND_COMPONENTS AVCODEC AVFORMAT AVUTIL AVDEVICE AVFILTER SWSCALE POSTPROC SWRESAMPLE)
+  set(FFmpeg_FIND_COMPONENTS AVCODEC AVFORMAT AVUTIL AVDEVICE SWSCALE )
 endif ()
 
 #
@@ -66,21 +67,53 @@ macro(find_component _component _pkgconfig _library _header)
      if (PKG_CONFIG_FOUND)
        pkg_check_modules(PC_${_component} ${_pkgconfig})
      endif ()
+
+     set(FFMPEG_SEARCH_PATHS
+      ~/Library/Frameworks
+      /Library/Frameworks
+      /usr/local
+      /usr
+      /sw # Fink
+      /opt/local # DarwinPorts
+      /opt/csw # Blastwave
+      /opt
+      /usr/lib/x86_64-linux-gnu
+      /usr/include/x86_64-linux-gnu
+      /usr/include
+      /usr/local/include
+      /opt/local/include
+      /sw/include
+      /usr/lib
+      /usr/local/lib
+      /opt/local/lib
+      /sw/lib
+      ${FFMPEG_ROOT_DIR}
+     )
   endif (NOT WIN32)
 
   find_path(${_component}_INCLUDE_DIRS ${_header}
     HINTS
       ${PC_LIB${_component}_INCLUDEDIR}
       ${PC_LIB${_component}_INCLUDE_DIRS}
+      $ENV{FFMPEG_ROOT_DIR}
     PATH_SUFFIXES
-      ffmpeg
+      ffmpeg include include/x86_64-linux-gnu
+    PATHS
+      ${FFMPEG_SEARCH_PATHS}
   )
 
   find_library(${_component}_LIBRARIES NAMES ${_library}
       HINTS
       ${PC_LIB${_component}_LIBDIR}
       ${PC_LIB${_component}_LIBRARY_DIRS}
+      $ENV{FFMPEG_ROOT_DIR}
+    PATH_SUFFIXES
+      ffmpeg lib64 lib
+    PATHS
+      ${FFMPEG_SEARCH_PATHS}
   )
+
+  # message("library ${_component}_LIBRARIES with include ${_component}_INCLUDE_DIRS")
 
   set(${_component}_DEFINITIONS  ${PC_${_component}_CFLAGS_OTHER} CACHE STRING "The ${_component} CFLAGS.")
   set(${_component}_VERSION      ${PC_${_component}_VERSION}      CACHE STRING "The ${_component} version number.")
